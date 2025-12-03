@@ -1,5 +1,4 @@
-# 
-ID Card Reader (Flask)
+# ID Card Reader (Flask)
 
 This Flask microservice accepts an Egyptian ID image, detects regions (Faster R-CNN), crops them, performs OCR via PaddleOCR, and returns structured JSON.
 
