@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 export default {
   content: [
     "./index.html",
@@ -7,21 +8,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-        },
+        background: '#1E2A38',  // dark blue-gray background
+        surface: '#2C3E50',     // medium blue-gray for cards/surfaces
+        primary: '#4A90E2',     // bright blue for primary actions
+        secondary: '#357ABD',   // medium blue for secondary actions
+        accent: '#1C5980',      // dark blue for accents
+        success: '#2ECC71',     // green for success states
+        error: '#E74C3C',       // red for error states
       },
     },
   },
+
+
   plugins: [],
 }
-

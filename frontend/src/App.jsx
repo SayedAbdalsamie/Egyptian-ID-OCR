@@ -7,8 +7,6 @@ import Crop from './pages/Crop';
 import OcrResult from './pages/OcrResult';
 
 function App() {
-  console.log('App component rendering');
-  
   return (
     <AppProvider>
       <BrowserRouter>

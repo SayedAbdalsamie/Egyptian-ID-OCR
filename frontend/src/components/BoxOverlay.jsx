@@ -15,10 +15,11 @@ export default function BoxOverlay({ imageRef, boxes, selectedBoxes, onBoxToggle
       top: `${y1 * scaleY}px`,
       width: `${(x2 - x1) * scaleX}px`,
       height: `${(y2 - y1) * scaleY}px`,
-      border: `2px solid ${isSelected ? '#10b981' : '#3b82f6'}`,
-      backgroundColor: isSelected ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+      border: `2px solid ${isSelected ? '#2ECC71' : '#4A90E2'}`, // success / primary
+      backgroundColor: isSelected ? 'rgba(46, 204, 113, 0.15)' : 'rgba(74, 144, 226, 0.15)',
       cursor: 'pointer',
       transition: 'all 0.2s',
+      boxShadow: isSelected ? '0 0 8px rgba(46, 204, 113, 0.4)' : '0 0 4px rgba(74, 144, 226, 0.3)',
     };
   };
 
@@ -34,7 +35,9 @@ export default function BoxOverlay({ imageRef, boxes, selectedBoxes, onBoxToggle
           }}
           className="pointer-events-auto group"
         >
-          <div className="absolute -top-6 left-0 bg-blue-500 text-white text-xs px-2 py-1 rounded font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className={`absolute -top-6 left-0 text-white text-xs px-2 py-1 rounded-lg font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity ${
+            selectedBoxes.has(label) ? 'bg-success' : 'bg-primary'
+          }`}>
             {label}
           </div>
         </div>
@@ -42,4 +45,3 @@ export default function BoxOverlay({ imageRef, boxes, selectedBoxes, onBoxToggle
     </div>
   );
 }
-
