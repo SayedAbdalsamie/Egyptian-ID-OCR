@@ -50,13 +50,19 @@ def check_dependencies():
         print_colored("Error: Node.js not found. Please install Node.js from https://nodejs.org/", Colors.RED)
         return False
     
-    # Check if npm is installed
+    # Check if npm is installed (Windows may need npm.cmd)
+    npm_cmd = 'npm.cmd' if platform.system() == 'Windows' else 'npm'
     try:
-        result = subprocess.run(['npm', '--version'], capture_output=True, text=True, check=True)
+        result = subprocess.run([npm_cmd, '--version'], capture_output=True, text=True, check=True, shell=True)
         print_colored(f"npm version: {result.stdout.strip()}", Colors.GREEN)
     except (subprocess.CalledProcessError, FileNotFoundError):
-        print_colored("Error: npm not found. Please install npm", Colors.RED)
-        return False
+        # Try alternative command
+        try:
+            result = subprocess.run(['npm', '--version'], capture_output=True, text=True, check=True, shell=True)
+            print_colored(f"npm version: {result.stdout.strip()}", Colors.GREEN)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print_colored("Error: npm not found. Please install npm", Colors.RED)
+            return False
     
     return True
 
@@ -67,12 +73,18 @@ def install_frontend_dependencies():
     
     if not node_modules.exists():
         print_colored("Installing frontend dependencies...", Colors.YELLOW)
+        npm_cmd = 'npm.cmd' if platform.system() == 'Windows' else 'npm'
         try:
-            subprocess.run(['npm', 'install'], cwd=frontend_dir, check=True)
+            subprocess.run([npm_cmd, 'install'], cwd=frontend_dir, check=True, shell=True)
             print_colored("Frontend dependencies installed successfully!", Colors.GREEN)
         except subprocess.CalledProcessError:
-            print_colored("Error: Failed to install frontend dependencies", Colors.RED)
-            return False
+            # Try alternative command
+            try:
+                subprocess.run(['npm', 'install'], cwd=frontend_dir, check=True, shell=True)
+                print_colored("Frontend dependencies installed successfully!", Colors.GREEN)
+            except subprocess.CalledProcessError:
+                print_colored("Error: Failed to install frontend dependencies", Colors.RED)
+                return False
     else:
         print_colored("Frontend dependencies already installed", Colors.GREEN)
     
@@ -108,14 +120,16 @@ def start_frontend():
     
     frontend_dir = Path("frontend")
     
-    # Start Vite dev server
+    # Start Vite dev server (use npm.cmd on Windows)
+    npm_cmd = 'npm.cmd' if platform.system() == 'Windows' else 'npm'
     frontend_process = subprocess.Popen(
-        ['npm', 'run', 'dev'],
+        [npm_cmd, 'run', 'dev'],
         cwd=frontend_dir,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        bufsize=1
+        bufsize=1,
+        shell=True
     )
     
     return frontend_process

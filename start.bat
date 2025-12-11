@@ -23,23 +23,29 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Check if npm is available
-npm --version >nul 2>&1
+REM Check if npm is available (try npm.cmd first, then npm)
+npm.cmd --version >nul 2>&1
 if errorlevel 1 (
-    echo Error: npm not found. Please install npm
-    pause
-    exit /b 1
+    npm --version >nul 2>&1
+    if errorlevel 1 (
+        echo Error: npm not found. Please install npm
+        pause
+        exit /b 1
+    )
 )
 
 REM Install frontend dependencies if needed
 if not exist "frontend\node_modules" (
     echo Installing frontend dependencies...
     cd frontend
-    call npm install
+    call npm.cmd install
     if errorlevel 1 (
-        echo Error: Failed to install frontend dependencies
-        pause
-        exit /b 1
+        call npm install
+        if errorlevel 1 (
+            echo Error: Failed to install frontend dependencies
+            pause
+            exit /b 1
+        )
     )
     cd ..
 )
@@ -67,7 +73,7 @@ REM Wait a moment for backend to start
 timeout /t 2 /nobreak >nul
 
 REM Start frontend in a new window
-start "Vite Frontend" cmd /k "cd frontend && npm run dev"
+start "Vite Frontend" cmd /k "cd frontend && npm.cmd run dev"
 
 echo.
 echo Both servers are starting in separate windows.
