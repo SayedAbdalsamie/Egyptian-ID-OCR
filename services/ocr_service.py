@@ -321,27 +321,47 @@ class OCRService:
         
         return ocr_result
 
-        # """Run OCR and return only rec_texts."""
-        # ocr = self.ocr_en if lang == "en" else self.ocr_ar
-
-        # try:
-        #     result = ocr.predict(input=image_path)
-        #     if not result:
-        #         return ""
-
-        #     texts = []
-
-        #     # Each result item contains rec_texts
-        #     for res in result:
-        #         if hasattr(res, "rec_texts") and res.rec_texts:
-        #             texts.extend([str(t) for t in res.rec_texts if t])
-
-        #     # return merged text
-        #     return " ".join(texts).strip()
-
-        # except Exception as e:
-        #     print(f"OCR Error for {image_path}: {e}")
-        #     return ""
+    def _run_single_ocr(self, image_path: str, lang: str = "ar") -> str:
+        """Run OCR on a single image and return text as a string."""
+        try:
+            # Get the appropriate OCR model (lazy loading)
+            if lang == "en":
+                ocr_model = self.ocr_en
+            else:
+                ocr_model = self.ocr_ar
+            
+            # Validate image
+            if not self._validate_image(image_path):
+                return ""
+            
+            # Run OCR
+            result = ocr_model.predict(input=image_path)
+            if not result:
+                return ""
+            
+            texts = []
+            # Extract text from result
+            for res in result:
+                if isinstance(res, dict):
+                    rec_texts = res.get("rec_texts", [])
+                elif hasattr(res, "rec_texts"):
+                    rec_texts = res.rec_texts
+                elif hasattr(res, "get"):
+                    rec_texts = res.get("rec_texts", [])
+                else:
+                    continue
+                
+                if rec_texts:
+                    if isinstance(rec_texts, list):
+                        texts.extend([str(t) for t in rec_texts if t])
+                    else:
+                        texts.append(str(rec_texts))
+            
+            # Return merged text
+            return " ".join(texts).strip()
+        except Exception as e:
+            print(f"OCR Error for {image_path}: {e}")
+            return ""
 
     def process_crops(self, crop_map):
         """
@@ -363,9 +383,9 @@ class OCRService:
 
             # Num2 uses English OCR
             if class_name == "Num2":
-                out[class_name] = self.run_ocr(image_path, lang="en")
+                out[class_name] = self._run_single_ocr(image_path, lang="en")
             else:
-                out[class_name] = self.run_ocr(image_path, lang="ar")
+                out[class_name] = self._run_single_ocr(image_path, lang="ar")
 
         # Derive BD from Num1 using Egyptian ID format
         num1_text = out.get("Num1", "")

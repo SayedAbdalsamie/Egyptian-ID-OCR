@@ -50,11 +50,41 @@ paddle_ocr/
 
 ## Run
 
+### Option 1: Unified Startup (Recommended)
+
+Start both frontend and backend with a single command:
+
+**Windows:**
+```bash
+start.bat
+```
+
+**Linux/Mac:**
+```bash
+python start.py
+```
+
+This will:
+- Check dependencies
+- Install frontend dependencies if needed
+- Start Flask backend on `http://localhost:8000`
+- Start Vite frontend on `http://localhost:3000`
+
+### Option 2: Manual Startup
+
+**Backend only:**
 ```bash
 python app.py
 ```
-
 The server will start on `http://0.0.0.0:8000`
+
+**Frontend only:**
+```bash
+cd frontend
+npm install  # First time only
+npm run dev
+```
+The frontend will start on `http://localhost:3000`
 
 ## API Endpoints
 
